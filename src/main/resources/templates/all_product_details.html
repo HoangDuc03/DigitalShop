@@ -1,0 +1,45 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>All Product Details</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1>All Product Details</h1>
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>WarehouseID</th>
+          <th>Seri</th>
+          <th>Manufacture Date</th>
+          <th>Expiry Date</th>
+          <th>Denomination</th>
+          <th>Provider</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="productDetail : ${productDetails}">
+          <td th:text="${productDetail.id}"></td>
+          <td th:text="${productDetail.warehouse}"></td>
+          <td th:text="${productDetail.seri}"></td>
+          <td th:text="${productDetail.manufactureDate}"></td>
+          <td th:text="${productDetail.expiryDate}"></td>
+          <td th:text="${productDetail.denomination}"></td>
+          <td th:text="${productDetail.provider}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

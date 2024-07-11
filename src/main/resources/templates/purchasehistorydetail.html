@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}"/>
+</head>
+<body>
+<div class="container">
+<div >
+    <div>
+        <th:block>
+            <table border="2px">
+                <tr>
+                    <td><button><a th:href="@{/profile/purchasehistory}" th:text="Back"></a></button></td>
+                    <td th:text="${title.product.Name}"></td>
+                    <td th:text="${title.purchasedate}"></td>
+                </tr>
+            </table>
+        </th:block>
+    </div>
+    <div>
+        <table class="table table-striped table-success text-center">
+            <thead>
+            <tr>
+                <th class="col-md-1">Index</th>
+                <th class="col-md-2">Code</th>
+                <th class="col-md-2">Seri</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="item, de : ${list}">
+                <tr>
+                    <td th:text="${de.index +1}"></td>
+                    <td th:text="${item.Code}"></td>
+                    <td th:text="${item.Seri}"></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</body>
+</html>

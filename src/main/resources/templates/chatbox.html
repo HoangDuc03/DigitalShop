@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Chat </title>
+    <link rel="stylesheet" th:href="@{Css/main.css}" />
+</head>
+<body>
+<input type="hidden" id="name" class="form-control" th:value="${session.infor.userName}"/>
+
+<div id="chat-page" class="chat-area">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>ChatBox </h2>
+        </div>
+        <ul id="messageArea">
+            <th:block th:each="chat : ${listchat}">
+                <li class="chat-message">
+                    <i style="background-color: rgb(255, 86, 82);" th:text="${chat.username.charAt(0)}" ></i>
+                    <span th:text="${chat.username}"></span>
+                    <p th:text="${chat.message}"> </p>
+                </li>
+            </th:block>
+        </ul>
+        <form id="messageForm" name="messageForm" nameForm="messageForm">
+            <div class="form-group">
+                <div class="input-group clearfix">
+                    <input type="text" id="message" placeholder="Enter message..."
+                           autocomplete="off" class="form-control" />
+                    <button type="submit" class="primary">Enter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script
+        th:src="@{https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js}"></script>
+<script
+        th:src="@{https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js}"></script>
+<script th:src="@{JS/main.js}"></script>
+</body>
+</html>

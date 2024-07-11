@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        .product-image {
+            float: left;
+            margin-right: 20px;
+        }
+        .product-details {
+            overflow: hidden; /* Clear float */
+        }
+        .product-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .product-details th, .product-details td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .buy-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Conditional header based on userdto -->
+<th:block th:if="${userdto != null}">
+    <th:block th:include="/_header_on"></th:block>
+</th:block>
+
+<div th:if="${productDetail}">
+    <div class="container">
+        <h1>Product Detail</h1>
+        <div class="product-details">
+            <div class="product-image">
+                <img th:src="@{'/ProductTypeImages/' + ${productDetail.id} + '.jpg'}" alt="Product's Image" />
+            </div>
+            <table>
+                <tr>
+                    <th>Price</th>
+                    <td th:text="${productDetail.denomination}"></td>
+                </tr>
+                <tr>
+                    <th>Provider</th>
+                    <td th:text="${productDetail.provider}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Button section -->
+        <div class="button-container" th:if="${isLoggedIn}">
+            <form id="buyForm" th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId" th:value="${productDetail.id}">
+                <input type="hidden" name="quantity" value="1"> <!-- Default quantity -->
+                <button type="submit" class="buy-button">Buy now</button>
+            </form>
+        </div>
+        <div class="button-container" th:unless="${isLoggedIn}">
+            <button onclick="redirectToLogin()" class="buy-button">Log in to buy</button>
+        </div>
+    </div>
+</div>
+
+<div th:if="${errorMessage}">
+    <div class="container">
+        <h1 th:text="${errorMessage}"></h1>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function redirectToLogin() {
+        var returnUrl = window.location.pathname + window.location.search;
+        window.location.href = '/login?returnUrl=' + encodeURIComponent(returnUrl);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script>
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailError = document.getElementById('emailError');
+
+            if (!emailPattern.test(emailInput.value)) {
+                emailError.textContent = "Please enter a valid email address.";
+                return false;
+            } else {
+                emailError.textContent = "";
+                return true;
+            }
+        }
+
+        function validateForm() {
+            return validateEmail();
+        }
+    </script>
+</head>
+<body>
+<div class="container" style="margin-top: 40px">
+    <h1>Create User</h1>
+    <form th:action="@{/createuser}" method="post" onsubmit="return validateForm()">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" name="username" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" required>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="form-control" name="fullname" required>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" name="email" required oninput="validateEmail()">
+            <small id="emailError" class="form-text text-danger"></small>
+        </div>
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" name="phone" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')" required>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select class="form-control" name="roleid" required>
+                <option value="2">User</option>
+                <option value="1">Admin</option>
+            </select>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        <button type="submit" class="btn btn-success">Create</button>
+        <a href="/listuser" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

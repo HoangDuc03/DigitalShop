@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            background-color: #9fcdff;
+            color: #1a1a1a;
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            background: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .product-image img {
+            max-width: 150px;
+            border-radius: 5px;
+        }
+        .product-details {
+            margin-left: 20px;
+        }
+        .product-details p {
+            margin: 5px 0;
+        }
+        .product-details form {
+            margin: 10px 0;
+        }
+        .total-cart-price {
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .cart-actions form {
+            margin: 0;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .button-delete {
+            background-color: #dc3545;
+        }
+        .button-delete:hover {
+            background-color: #c82333;
+        }
+        .button-clear {
+            background-color: #ffc107;
+        }
+        .button-clear:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+<th:block th:include="/head_ver2"></th:block>
+<h1>Shopping Cart</h1>
+<div class="container">
+    <div th:if="${not #lists.isEmpty(cartItems)}">
+        <div th:each="item : ${cartItems}">
+            <div class="cart-item">
+                <div class="product-image">
+                    <img th:src="@{'/ProductTypeImages/' + ${item.imageUrl}}" alt="Product Image" />
+                </div>
+                <div class="product-details">
+                    <p>Product ID: <span th:text="${item.productId}"></span></p>
+                    <form th:action="@{/cart/updateQuantity}" method="post">
+                        <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" id="quantity" name="quantity" th:value="${item.quantity}" min="1"/>
+                        <button type="submit">Update</button>
+                    </form>
+                    <p>Price: $<span th:text="${item.price}"></span></p>
+                    <p>Total Price: $<span th:text="${item.totalPrice}"></span></p>
+                    <p>Current Available: <span th:text="${item.currentAvailable}"></span></p>
+                    <form th:action="@{/cart/remove}" method="post" style="display:inline;">
+                        <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                        <button type="submit" class="button-delete">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="total-cart-price">
+            <p>Total Cart Price: $<span th:text="${totalCartPrice}"></span></p>
+        </div>
+        <div class="cart-actions">
+            <form th:action="@{/cart/clear}" method="post">
+                <button type="submit" class="button-clear">Remove All</button>
+            </form>
+            <form th:action="@{/cart/purchase}" method="post">
+                <button type="submit">Purchase</button>
+            </form>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(cartItems)}">
+        <p>Your cart is empty.</p>
+    </div>
+</div>
+</body>
+</html>

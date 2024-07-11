@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+    <link rel="stylesheet"
+          href=
+                  "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <!-- success message  -->
+            <div th:if="${param.success}">
+                <div class="alert alert-info"> You are successfull registered to our awsome app!</div>
+            </div>
+
+            <h1>Registration</h1>
+            <form id="registerForm" th:action="@{/register}" th:object="${user}" method="post">
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}">
+                    <div id="fullNameError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}">
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="phone" th:field="*{phoneNumber}">
+                    <div id="phoneError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" th:field="*{userName}">
+                    <div id="usernameError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" th:field="*{password}">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="rePassword" class="form-label">Repeat Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="rePassword">
+                        <button class="btn btn-outline-secondary" type="button" id="toggleRePassword">
+                            <i class="bi bi-eye-slash" id="toggleIcons"></i>
+                        </button>
+                    </div>
+                    <div id="rePasswordError" class="error-message"></div>
+                </div>
+                <button type="submit" class="btn btn-success">Register</button>
+                <span>Already registered ? <a href="/" th:href="@{/login}">Login here</a></span>
+            </form>
+            <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
+            <div id="formError" class="alert alert-danger mt-3" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        let isValid = true;
+        let errorMessage = "";
+
+        // Full Name validation
+        const fullName = document.getElementById('fullName').value.trim();
+        const fullNameError = document.getElementById('fullNameError');
+        if (!/^[A-Za-z ]{4,}$/.test(fullName) || fullName.length < 4) {
+            fullNameError.textContent = "Full Name must be at least 4 characters long and contain only letters and spaces.";
+            isValid = false;
+        } else {
+            fullNameError.textContent = "";
+        }
+
+        // Username validation
+        const username = document.getElementById('username').value.trim();
+        const usernameError = document.getElementById('usernameError');
+        if (username.length < 6) {
+            usernameError.textContent = "Username must be at least 6 characters long.";
+            isValid = false;
+        } else {
+            usernameError.textContent = "";
+        }
+
+        // Email validation
+        const email = document.getElementById('email').value.trim();
+        const emailError = document.getElementById('emailError');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            emailError.textContent = "Email must follow the email format. example FPT@gmail.com";
+            isValid = false;
+        } else {
+            emailError.textContent = "";
+        }
+
+        // Phone validation
+        const phone = document.getElementById('phone').value.trim();
+        const phoneError = document.getElementById('phoneError');
+        if (!/^0\d{9}$/.test(phone)) {
+            phoneError.textContent = "Phone must be 10 digits long and start with 0.";
+            isValid = false;
+        } else {
+            phoneError.textContent = "";
+        }
+
+        // Password validation
+        const password = document.getElementById('password').value.trim();
+        const passwordError = document.getElementById('passwordError');
+        const passwordPattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/;
+        if (!passwordPattern.test(password)) {
+            passwordError.textContent = "Password must be at least 6 characters long, contain at least one uppercase letter, and one special character.";
+            isValid = false;
+        } else {
+            passwordError.textContent = "";
+        }
+
+        // Repeat Password validation
+        const rePassword = document.getElementById('rePassword').value.trim();
+        const rePasswordError = document.getElementById('rePasswordError');
+        if (password !== rePassword) {
+            rePasswordError.textContent = "Passwords do not match.";
+            isValid = false;
+        } else {
+            rePasswordError.textContent = "";
+        }
+
+        // Display error message if form is not valid
+        const formError = document.getElementById('formError');
+        if (!isValid) {
+            formError.textContent = "Please fix the errors above.";
+            formError.style.display = "block";
+            formError.textContent = "Please fix the errors above.";
+            formError.style.display = "block";
+        } else {
+            formError.style.display = "none";
+            this.submit();
+        }
+    });
+
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+        this.querySelector('i').classList.toggle('bi-eye');
+    });
+
+    const toggleRePassword = document.getElementById('toggleRePassword');
+    const rePasswordField = document.getElementById('rePassword');
+
+    toggleRePassword.addEventListener('click', function () {
+        const type = rePasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        rePasswordField.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+        this.querySelector('i').classList.toggle('bi-eye');
+    });
+</script>
+</body>
+</html>

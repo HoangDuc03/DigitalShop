@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>PurchaseHistory</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}"/>
+</head>
+<body>
+<div class="container">
+    <button class="btn btn-outline-primary"><a href="../home">Home</a></button>
+    <div class="d-flex justify-content-between mb-3">
+        <form action="purchasehistory" method="get">
+            <label>Search: </label><input type="text" name="name" ></label>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th >Index</th>
+                <th >Name</th>
+                <th >Date</th>
+                <th ></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="item, de : ${list}">
+                <tr>
+                    <td th:text="${de.index +1}"></td>
+                    <td>
+                        <div><a th:href="@{/profile/purchasehistory/detail(id=${item.ID})}" th:text="${item.product.Name}"></a></div>
+                    </td>
+                    <td th:text="${item.purchasedate}">Date</td>
+                    <td>
+                        <button><a th:href="@{/profile/purchasehistory/detail(id=${item.ID})}" th:text="Detail"></a></button>
+                        <button><a th:href="@{/ProductDetail/detail(id=${item.ID})}" th:text="Rebuy">Rebuy</a></button>
+                        <button><a href="#" th:text="Feedback"></a></button>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+
+
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <th:block th:if="${page > 0}">
+                    <li class="page-item"><a class="page-link" th:href="@{/profile/purchasehistory(page=${page-1},name=${param.name})}">Previous</a></li>
+                </th:block>
+
+                <li class="page-item"><a class="page-link" th:href="@{/profile/purchasehistory(page=${page+1},name=${param.name})}">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>
