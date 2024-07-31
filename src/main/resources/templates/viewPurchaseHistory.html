@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase History</title>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
+    <!-- Responsive -->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <!-- jQuery UI for date picker -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.datepicker').datepicker({
+                dateFormat: 'dd-mm-yy',
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            $('#clearDate').click(function() {
+                $('#dateField').val('').prop('readonly', true);
+            });
+        });
+    </script>
+    <style>
+        .temp {
+            padding: 150px 0px 180px 0px;
+        }
+        .input-group {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div th:include="header_admin"></div>
+<div class="temp">
+    <div class="contemp">
+        <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 30px"><b>All Purchase History</b></h1>
+        <form th:action="@{/admin/viewPurchaseHistory}" method="get" class="search-form mb-4">
+            <div class="row">
+                <div class="col-md-5 mb-2">
+                    <input type="text" name="productName" th:value="${productName}" class="form-control" placeholder="Search by product name">
+                </div>
+                <div class="col-md-5 mb-2">
+                    <div class="input-group">
+                        <input type="text" id="dateField" name="date" th:value="${date != null ? #dates.format(date, 'dd-MM-yyyy') : ''}" class="form-control datepicker" placeholder="Search by date" readonly>
+                        <div class="input-group-append">
+                            <button type="button" id="clearDate" class="btn btn-secondary">Clear</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-block">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <div th:if="${message}" class="alert alert-success" role="alert">
+            <span th:text="${message}"></span>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(purchases)}" class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Account Name</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="purchase : ${purchases}">
+                    <td th:text="${purchase.ID}"></td>
+                    <td th:text="${purchase.user.fullName}"></td>
+                    <td th:text="${purchase.product.name}"></td>
+                    <td th:text="${purchase.price}"></td>
+                    <td th:text="${#dates.format(purchase.purchasedate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                    <td>
+                        <a th:href="@{/admin/detail(id=${purchase.ID})}" class="btn btn-primary btn-sm">Show Details</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${#lists.isEmpty(purchases)}" class="alert alert-info" role="alert">
+            There is no purchase history that matches your search
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/viewPurchaseHistory(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/viewPurchaseHistory(page=${i})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/viewPurchaseHistory(page=${currentPage + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<div th:include="footer"></div>
+</body>
+</html>

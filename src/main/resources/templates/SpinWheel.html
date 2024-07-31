@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Wheel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <style>
+        body {
+
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.wheel-container {
+    text-align: center;
+}
+
+#spinButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+<div th:include="header"></div>
+<div class="temp">
+    <div>
+        <a href="/game/rewardslist"><button type="button" class="btn btn-primary">
+             Your point: <span class="badge badge-light" id="point" th:text="${user}"></span>
+        </button></a>
+    </div>
+<div class="wheel-container">
+    <div id="ERROR">
+
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <canvas id="wheel" width="500" height="500"></canvas>
+        <img style="width: 30px; height: auto;" src="/images/left-arrow.png">
+    </div>
+    <button id="spinButton">Spin</button>
+</div>
+</div>
+<div th:include="footer"></div>
+<script>
+    const wheel = document.getElementById('wheel');
+const spinButton = document.getElementById('spinButton');
+const ctx = wheel.getContext('2d');
+
+var rewards =[];
+var slices = 10;
+var choice = 4;
+var sliceDeg = 360 / slices;
+const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#FFC0CB', '#FFD700', '#00FFFF'];
+
+let deg = 0;
+let speed = 0;
+let isSpinning = false;
+
+fetch('rewards')
+            .then(response => response.json())
+            .then(data => {
+                rewards = data;
+                slices = data.length;
+                sliceDeg = 360 / slices;
+                drawWheel();
+            });
+
+function drawWheel() {
+    for (let i = 0; i < slices; i++) {
+        const startAngle = (sliceDeg * i) * Math.PI / 180;
+        const endAngle = (sliceDeg * (i + 1)) * Math.PI / 180;
+
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 250, (sliceDeg * i) * Math.PI / 180, (sliceDeg * (i + 1)) * Math.PI / 180);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate(startAngle + (endAngle - startAngle) / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "white";
+        ctx.font = "bold 20px Arial";
+        ctx.fillText(rewards[i].name, 230, 10);
+        ctx.restore();
+    }
+}
+
+function rotateWheel() {
+    if(speed>136) deg += 10;
+    else if(speed>100) deg += 10;
+    else if(speed>80) deg += 7;
+    else if(speed>60) deg += 5;
+    else if(speed>40) deg += 3;
+    else if(speed>20) deg +=2;
+    else if(speed>0) deg += 1;
+
+    speed -= 1;
+
+    if (speed <= 0) {
+        speed = 0;
+        isSpinning = false;
+        calculateWinner();
+        deg = sliceDeg * 0;
+    }
+
+    ctx.clearRect(0, 0, 500, 500);
+    ctx.save();
+    ctx.translate(250, 250);
+    ctx.rotate(deg * Math.PI / 180);
+    ctx.translate(-250, -250);
+    drawWheel();
+    ctx.restore();
+
+    if (isSpinning) {
+        requestAnimationFrame(rotateWheel);
+    }
+}
+function calculateWinner() {
+    const winningSlice = Math.floor((360 - deg % 360) / sliceDeg);
+    if(winningSlice == slices) winningSlice--;
+    alert(`The winner is ${rewards[winningSlice].name}!`); // Always alert the second slice
+}
+spinButton.addEventListener('click',async () => {
+    if (!isSpinning) {
+        var response = await fetch('rewards-choice', {
+                method: 'POST'
+            });
+            var data = await response.text();
+          choice = parseInt(data);
+          if(choice == -1)
+          {
+            var context = "<p style='color:red'>You don't have enough points</p> ";
+            document.getElementById('ERROR').innerHTML = context;
+            return;
+          }
+
+        document.getElementById('ERROR').innerHTML = "";
+        var point = Number(document.getElementById('point').innerHTML);
+        console.log(point);
+        point = (point -100)
+        document.getElementById('point').innerHTML = point;
+        point
+        speed = 136;
+        var addsp = Math.random() * sliceDeg + sliceDeg * choice;
+        speed = speed + addsp/10;
+        isSpinning = true;
+        rotateWheel();
+    }
+});
+</script>
+</body>
+</html>

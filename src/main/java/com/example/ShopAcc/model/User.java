@@ -2,11 +2,10 @@ package com.example.ShopAcc.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Users")
 @Data
@@ -37,9 +36,12 @@ public class User {
     @Column(name = "Phone", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "Createdat", nullable = false)
+    @Column(name = "`Createdat`", nullable = false)
     private String createdAt;
 
+    @Column(name = "`point`", nullable = false)
+    private int point;
+    
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "Roleid")

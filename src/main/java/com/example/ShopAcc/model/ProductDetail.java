@@ -1,6 +1,5 @@
 package com.example.ShopAcc.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "Productdetail")
+@Table(name = "productdetail")
 public class ProductDetail {
 
     @Id
@@ -16,22 +15,16 @@ public class ProductDetail {
     @Column(name = "ID")
     private int id;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "Productid")
-    private Product product;
+    @Column(name = "Productid")
+    private int productid;
 
     @Column(name = "Seri")
     private String seri;
 
-    @Column(name="Code")
+    @Column(name = "Code")
     private String code;
-    @Override
-    public String toString() {
-        return "ProductDetail{" +
-                "id=" + id +
-                ", warehouseID=" + product.getID() +
-                ", seri='" + seri + '\'' +
-                '}';
-    }
+
+    @Column(name = "Status")
+    private boolean status;
 }
+

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class Purchasehistory {
     private int price;
 
     @Column(name = "Date")
-    private String purchasedate;
+    private Date purchasedate;
 
     @ManyToOne
     @JsonBackReference

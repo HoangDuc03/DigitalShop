@@ -1,9 +1,11 @@
+
 package com.example.ShopAcc.repository;
 
 import com.example.ShopAcc.model.Purchasehistory;
 import com.example.ShopAcc.model.Purchasehistorydetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +26,10 @@ public interface PurchaseHistoryDetailRepo extends JpaRepository<Purchasehistory
             nativeQuery = true)
     int price(int id);
 
+
+    @Query(value = "SELECT * FROM purchasehistorydetail WHERE Purchasehistoryid = ?", nativeQuery = true)
+    List<Purchasehistorydetail> findAllByPurchasehistoryid(int purchasehistoryId);
+
+    @Query("SELECT phd FROM Purchasehistorydetail phd WHERE phd.Purchasehistory.ID = :purchaseID")
+    List<Purchasehistorydetail> findLatestBill(@Param("purchaseID") int purchaseID);
 }

@@ -4,42 +4,64 @@
     <meta charset="UTF-8">
     <title>Edit Product</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
 </head>
 <body>
-<!-- Navigation Bar (if applicable) -->
-
-<div class="container mt-4">
-    <h2>Edit Product</h2>
-    <form th:action="@{/edit-product/{id}(id=${product.ID})}" method="post" th:object="${product}" onsubmit="return validateForm()">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" th:field="*{name}">
-            <small id="nameError" class="form-text text-danger"></small>
-        </div>
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="text" class="form-control" id="price" name="price" th:field="*{price}">
-            <small id="priceError" class="form-text text-danger"></small>
-        </div>
-        <div class="form-group">
-            <label for="sold">Sold Quantity</label>
-            <input readonly type="text" class="form-control" id="sold" name="sold" th:field="*{sold}">
-        </div>
-        <div class="form-group">
-            <label for="image">Image URL</label>
-            <input type="text" class="form-control" id="image" name="image" th:field="*{image}">
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" name="description" th:field="*{describes}"></textarea>
-        </div>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="status" name="status" th:field="*{status}">
-            <label class="form-check-label" for="status">Status</label>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-    </form>
+<div th:include="header_admin"></div>
+<div class="container mt-4 temp">
+    <div class="contemp">
+        <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 10px"><b>Edit Product</b></h1>
+        <form th:action="@{/admin/edit-product/{id}(id=${product.ID})}" method="post" th:object="${product}" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" th:field="*{name}">
+                <small id="nameError" class="form-text text-danger"></small>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="text" required ="form-control" id="price" name="price" th:field="*{price}">
+                <small id="priceError" class="form-text text-danger"></small>
+            </div>
+            <div class="form-group">
+                <label for="sold">Sold Quantity</label>
+                <input readonly type="text" class="form-control" id="sold" name="sold" th:field="*{sold}">
+            </div>
+            <div class="form-group">
+                <label >Current Image</label>
+                <div>
+                    <img th:src="@{'/ProductImages/' + ${product.image}}" alt="Product Image" class="img-thumbnail" style="width: 100px;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="file">Change Image</label>
+                <input type="file" class="form-control-file" id="file" name="file">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" th:field="*{describes}"></textarea>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="status" name="status" th:field="*{status}">
+                <label class="form-check-label" for="status">Status</label>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        </form>
+    </div>
 </div>
+<div th:include="footer"></div>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

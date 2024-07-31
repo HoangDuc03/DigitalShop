@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Discount Detail</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+</head>
+<body>
+<div th:include="header_admin"></div>
+<div class="temp">
+    <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 20px"><b>Add Discount Detail</b></h1>
+<div class="container">
+
+    <form th:action="@{/admin/discounts/new}" th:object="${discountDetail}" method="post">
+        <div class="form-group">
+            <label for="userId">User ID:</label>
+            <input type="number" class="form-control" id="userId" name="userId" required>
+        </div>
+
+        <div class="form-group">
+            <label for="discountId">Discount ID:</label>
+            <input type="number" class="form-control" id="discountId" th:field="*{discountID}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="value">Value:</label>
+            <input type="text" class="form-control" id="value" th:field="*{value}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select class="form-control" id="status" th:field="*{status}">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/admin/discounts" class="btn btn-secondary">Cancel</a>
+    </form>
+
+
+</div>
+</div>
+<div th:include="footer"></div>
+</body>
+</html>

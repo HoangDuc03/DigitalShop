@@ -17,7 +17,7 @@ public class LogoutController {
     }
 
     @GetMapping("/logout")
-    public String logout(UserDto userDto, WebRequest request, SessionStatus status, HttpSession session) {
+    public String logout(WebRequest request, SessionStatus status, HttpSession session) {
         // Remove specific session attributes
         session.removeAttribute("infor");
 

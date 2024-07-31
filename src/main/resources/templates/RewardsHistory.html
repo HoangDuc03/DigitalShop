@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Rewards</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+</head>
+<body>
+<div th:include="header_admin"></div>
+<div class="temp">
+    <div class="contemp">
+
+        <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 50px"><b> Rewards List </b></h1>
+        <div class="temp-center">
+
+            <table class="table table-striped table-bordered" style="margin-top: 10px">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="list : ${list}">
+                    <td th:text="${list.name}"></td>
+                    <td th:text="${list.time}"></td>
+
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-group" th:if="${message}">
+                <label style="color: red" th:text="${message}"></label>
+            </div>
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination">
+                    <li th:if="${currentPage > 0}" class="page-item">
+                        <a class="page-link" th:href="@{/admin/game(page=${currentPage - 1}, size=${size})}">Previous</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/game(page=${i}, size=${size})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    <li th:if="${currentPage < totalPages - 1}" class="page-item">
+                        <a class="page-link" th:href="@{/admin/game(page=${currentPage + 1}, size=${size})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+    <footer th:include="footer"></footer>
+</body>
+</html>

@@ -1,28 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}"/>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}">
+    <!-- Responsive -->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <style>
+        .temp {
+            padding: 150px 0px 260px 0px;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<div >
-    <div>
-        <th:block>
-            <table border="2px">
-                <tr>
-                    <td><button><a th:href="@{/profile/purchasehistory}" th:text="Back"></a></button></td>
-                    <td th:text="${title.product.Name}"></td>
-                    <td th:text="${title.purchasedate}"></td>
-                </tr>
-            </table>
-        </th:block>
-    </div>
-    <div>
+<div th:include="header"></div>
+<div class="temp">
+
+<div class="contemp">
+    <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 30px"><b>Purchase History Detail</b></h1>
+        <button><a th:href="@{/profile/purchasehistory}"> Back </a> </button>
+        <h2><b>Product : </b><i th:text="${title.product.Name}"></i> </h2>
+        <h2><b>Price : </b><i th:text="${title.product.price}"></i> </h2>
+        <h2><b>Date : </b><i th:text="${title.purchasedate}"></i> </h2>
         <table class="table table-striped table-success text-center">
             <thead>
             <tr>
@@ -41,8 +54,9 @@
             </th:block>
             </tbody>
         </table>
-    </div>
 </div>
 </div>
+<div th:include="footer"></div>
+
 </body>
 </html>

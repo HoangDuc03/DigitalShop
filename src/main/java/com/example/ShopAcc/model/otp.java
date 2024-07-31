@@ -1,3 +1,4 @@
+
 package com.example.ShopAcc.model;
 
 public class otp {
@@ -38,3 +39,4 @@ public class otp {
         this.again = again;
     }
 }
+

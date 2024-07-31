@@ -1,8 +1,8 @@
 package com.example.ShopAcc.controller;
 
 import com.example.ShopAcc.dto.UserDto;
-import com.example.ShopAcc.model.ProductDetail;
-import com.example.ShopAcc.service.ProductDetailService;
+import com.example.ShopAcc.model.Product;
+import com.example.ShopAcc.service.ProductService;
 import com.example.ShopAcc.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,33 +16,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductDetailController {
 
     @Autowired
-    private ProductDetailService productDetailService;
+    private ProductService productService;
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/ProductDetail/detail")
     public String getProductDetail(@RequestParam("id") int productId, Model model, HttpServletRequest request) {
-        // Kiểm tra session để xác định trạng thái đăng nhập của người dùng
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         boolean isLoggedIn = (session != null && session.getAttribute("infor") != null);
-
-        // Đánh dấu trạng thái đăng nhập trong model
         model.addAttribute("isLoggedIn", isLoggedIn);
 
-        // Lấy chi tiết sản phẩm từ service và đưa vào model
-        ProductDetail productDetail = productDetailService.getProductDetailById(productId);
+        if (!isLoggedIn) {
+            // Store the current URL in the session
+            String currentUrl = request.getRequestURI() + "?" + request.getQueryString();
+            assert session != null;
+            session.setAttribute("redirectAfterLogin", currentUrl);
+        }
+
+        // Get product details from the service and add to model
+        Product productDetail = productService.getProductByID(productId);
+        if(productDetail.isStatus() == false ) return "redirect:/Product";
         model.addAttribute("productDetail", productDetail);
 
-        // Lấy thông tin người dùng từ service và đưa vào model
-        UserDto userDto = userService.getCurrentUserDto(); // Đây là ví dụ method để lấy thông tin người dùng hiện tại
+        // Get current user info from service and add to model
+        UserDto userDto = userService.getCurrentUserDto();
         model.addAttribute("userdto", userDto);
 
-        // Thêm request URI vào model (nếu cần thiết)
-        String requestURI = request.getRequestURI();
-        model.addAttribute("requestURI", requestURI);
-
-        return "product_detail"; // Trả về tên template Thymeleaf để hiển thị chi tiết sản phẩm
+        return "product_detail"; // Return the Thymeleaf template for product details
     }
-
 }

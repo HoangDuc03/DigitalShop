@@ -1,3 +1,4 @@
+
 package com.example.ShopAcc.repository;
 
 import com.example.ShopAcc.model.User;
@@ -11,4 +12,5 @@ public interface UsersRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
     Optional<User> findByUserName(String userName);
 }
+
 

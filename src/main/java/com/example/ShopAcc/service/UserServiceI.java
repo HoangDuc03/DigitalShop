@@ -11,6 +11,6 @@ import java.security.NoSuchAlgorithmException;
 public interface UserServiceI {
     ResponseEntity<ResponseObject> createUser(User user, HttpSession session);
     ResponseEntity<ResetPasswordDto> sendOtp(String email, HttpSession session);
-    ResponseEntity<ResetPasswordDto> verifyOtp(int userId, String otp,HttpSession session);
-    ResponseEntity<ResetPasswordDto> resetPassword(int userId, String newPassword, String reNewPassword);
+    ResponseEntity<ResetPasswordDto> verifyOtp(String otp,HttpSession session);
+    ResponseEntity<ResetPasswordDto> resetPassword(String newPassword, String reNewPassword, HttpSession session);
 }

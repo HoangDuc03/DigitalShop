@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <title>Manage Products</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
     <style>
         .status-active {
             color: green;
@@ -12,144 +26,150 @@
         .status-inactive {
             color: red;
         }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1300px;
+            }
+        }
     </style>
 </head>
 <body>
-<!-- Navigation Bar -->
-<th:block th:if="${userdto != null}">
-    <th:block th:include="/_header_admin" th:if="${userdto.valid}"></th:block>
-    <th:block th:include="/_header_off" th:if="${!userdto.valid}"></th:block>
-</th:block>
-
-<div class="container mt-4">
-    <h2>Manage Products</h2>
-    <div class="row">
-        <!-- Search and Filter Form -->
-        <form class="form-inline mb-3 col-md-12" method="get" action="/manage-product">
-            <div class="form-group col-md-4">
-                <label for="search" class="sr-only">Search</label>
-                <input type="text" class="form-control" id="search" name="search" placeholder="Search"
-                       th:value="${param.search}">
-            </div>
-            <div class="form-group col-md-3">
-                <label for="statusFilter" class="mr-2">Filter by Status:</label>
-                <select id="statusFilter" name="status" class="form-control">
-                    <option value="true" th:selected="${status}">Active</option>
-                    <option value="false" th:selected="${!status}">Inactive</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary mb-2 col-md-1">Apply</button>
-        </form>
-    </div>
-    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <span th:text="${successMessage}"></span>
-    </div>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
-        Add Product
-    </button>
-    <!-- Products Table -->
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Sold</th>
-            <th scope="col">Image</th>
-            <th scope="col">Description</th>
-            <th scope="col">Status</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product, stat : ${products}">
-            <th scope="row" th:text="${stat.index + 1}"></th>
-            <td th:text="${product.name}">Product Name</td>
-            <td th:text="${product.price}">Product Price</td>
-            <td th:text="${product.sold}">Sold Quantity</td>
-            <td>
-                <img th:src="@{${product.image}}" alt="Product Image" class="img-thumbnail" style="width: 100px;">
-            </td>
-            <td th:text="${product.describes}">Description</td>
-            <td th:classappend="${product.status} ? 'status-active' : 'status-inactive'">
-                <span th:text="${product.status} ? 'Active' : 'Inactive'"></span>
-            </td>
-            <td>
-                <a th:href="@{'/edit-product/' + ${product.ID}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:if="${product.status}" th:href="@{'/delete-product/' + ${product.ID}}"
-                   class="btn btn-danger btn-sm"
-                   th:data-product-name="${product.name}" th:data-product-id="${product.ID}"
-                   th:attr="onclick='return confirm(\'Are you sure you want to hide ' + ${product.name} + '?\') && showToast();'">Hide</a>
-                <a th:unless="${product.status}" th:href="@{'/delete-product/' + ${product.ID}}"
-                   class="btn btn-success btn-sm"
-                   th:data-product-name="${product.name}" th:data-product-id="${product.ID}"
-                   th:attr="onclick='return confirm(\'Are you sure you want to show ' + ${product.name} + '?\') && showToast();'">Show</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<div th:include="header_admin"></div>
+<div class="temp">
+    <div class="contemp">
+        <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 50px"><b>Product Management</b></h1>
+        <div class="row">
+            <!-- Search and Filter Form -->
+            <form class="form-inline mb-3 col-md-12" method="get" action="/admin/manage-product">
+                <div class="form-group col-md-4" style="padding-left: 0px; align-items: end">
+                    <label for="search" class="sr-only">Search</label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search"
+                           th:value="${param.search}">
                 </div>
-                <form id="addProductForm" method="post" action="/add-product" onsubmit="return validateForm()">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="productName">Name</label>
-                            <input type="text" class="form-control" id="productName" name="name" required>
-                            <small id="nameError" class="form-text text-danger"></small>
-                        </div>
-                        <div class="form-group">
-                            <label for="productPrice">Price</label>
-                            <input type="number" class="form-control" id="productPrice" name="price" required>
-                            <small id="priceError" class="form-text text-danger"></small>
-                        </div>
-                        <input type="hidden" class="form-control" id="productSold" name="sold" value="0">
-                        <div class="form-group">
-                            <label for="productImage">Image URL</label>
-                            <input type="text" class="form-control" id="productImage" name="image" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productDescription">Description</label>
-                            <textarea class="form-control" id="productDescription" name="describes" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="productStatus" name="status">
-                            <label class="form-check-label" for="productStatus">Active</label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Product</button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-group col-md-3">
+                    <label for="statusFilter" class="mr-2">Filter by Status:</label>
+                    <select id="statusFilter" name="status" class="form-control">
+                        <option value="true" th:selected="${status}">Active</option>
+                        <option value="false" th:selected="${!status}">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2 col-md-1">Apply</button>
+            </form>
         </div>
-    </div>  <nav th:if="${not #lists.isEmpty(products)}" aria-label="Page navigation">
-    <ul class="pagination">
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link"
-               th:href="@{'/manage-product?page=' + ${currentPage - 1} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}">Previous</a>
-        </li>
-        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-            th:classappend="${pageNum == currentPage} ? 'active'">
-            <a class="page-link"
-               th:href="@{'/manage-product?page=' + ${pageNum} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}"
-               th:text="${pageNum + 1}">1</a>
-        </li>
-        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-            <a class="page-link"
-               th:href="@{'/manage-product?page=' + ${currentPage + 1} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}">Next</a>
-        </li>
-    </ul>
-</nav>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
+            Add Product
+        </button>
+        <!-- Products Table -->
+        <table class="table table-striped" style="margin-top: 20px">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Sold</th>
+                <th scope="col">Image</th>
+                <th scope="col">Description</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product, stat : ${products}">
+                <th scope="row" th:text="${stat.index + 1}"></th>
+                <td th:text="${product.name}">Product Name</td>
+                <td th:text="${product.price}">Product Price</td>
+                <td th:text="${product.sold}">Sold Quantity</td>
+                <td>
+                    <img th:src="@{'/ProductImages/' + ${product.image}}" alt="Product Image" class="img-thumbnail" style="width: 100px;">
+                </td>
+
+                <td th:text="${product.describes}">Description</td>
+                <td th:classappend="${product.status} ? 'status-active' : 'status-inactive'">
+                    <span th:text="${product.status} ? 'Active' : 'Inactive'"></span>
+                </td>
+                <td>
+                    <a th:href="@{'product-details/product/' + ${product.ID}}" class="btn btn-primary btn-sm">List</a>
+                    <a th:href="@{'edit-product/' + ${product.ID}}" class="btn btn-warning btn-sm">Edit</a>
+                    <a th:if="${product.status}" th:href="@{'delete-product/' + ${product.ID}}"
+                       class="btn btn-danger btn-sm"
+                       th:data-product-name="${product.name}" th:data-product-id="${product.ID}"
+                       th:attr="onclick='return confirm(\'Are you sure you want to hide ' + ${product.name} + '?\') && showToast();'">Hide</a>
+                    <a th:unless="${product.status}" th:href="@{'delete-product/' + ${product.ID}}"
+                       class="btn btn-success btn-sm"
+                       th:data-product-name="${product.name}" th:data-product-id="${product.ID}"
+                       th:attr="onclick='return confirm(\'Are you sure you want to show ' + ${product.name} + '?\') && showToast();'">Show</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="addProductForm" method="post" action="/admin/add-product" onsubmit="return validateForm()" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="productName">Name</label>
+                                <input type="text" class="form-control" id="productName" name="name" required>
+                                <small id="nameError" class="form-text text-danger"></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="productPrice">Price</label>
+                                <input type="number" class="form-control" id="productPrice" name="price" required>
+                                <small id="priceError" class="form-text text-danger"></small>
+                            </div>
+                            <input type="hidden" class="form-control" id="productSold" name="sold" value="0">
+                            <div class="form-group">
+                                <label for="productImage">Image URL</label>
+                                <input type="file" class="form-control" id="productImage" name="file" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productDescription">Description</label>
+                                <textarea class="form-control" id="productDescription" name="describes" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="productStatus" name="status">
+                                <label class="form-check-label" for="productStatus">Active</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>  <nav th:if="${not #lists.isEmpty(products)}" aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{'/admin/manage-product?page=' + ${currentPage - 1} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}">Previous</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${pageNum == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{'/admin/manage-product?page=' + ${pageNum} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}"
+                   th:text="${pageNum + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{'/admin/manage-product?page=' + ${currentPage + 1} + '&size=' + ${size} + '&search=' + ${search} + '&status=' + ${status}}">Next</a>
+            </li>
+        </ul>
+    </nav>
+    </div>
+
 </div>
+<div th:include="footer"></div>
 
 <!-- Bootstrap JS and dependencies -->
 <script>

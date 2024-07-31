@@ -16,11 +16,12 @@ import java.util.Optional;
 //Load data from database and stored in the repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
+    User getUserByEmail(String email);
+    User findUserByEmail(String email);
     @Query(
-            value = "SELECT * FROM Users",
+            value = "select * from dbo_users",
             nativeQuery = true)
-    List<User> findAllUsers();
-    User findUserByUserName(String username);
+    List<User> getAllUser();
     User findByUserName(String userName);
     List<User> findByUserNameAndIdNot(String userName, int id);
     List<User> findByEmailAndIdNot(String email, int id);

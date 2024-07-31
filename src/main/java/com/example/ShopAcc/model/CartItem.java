@@ -1,36 +1,26 @@
 package com.example.ShopAcc.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-
+@Entity
+@Data
 @Getter
 @Setter
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Table(name = "Cart")
+@Table(name = "cart_items")
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ID")
     private int id;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "Productid")
-    private Product product;
+    @Column(name = "product_id")
+    private int productId;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "Accountid")
-    private User user;
+    private int userId;
 
-    @Column(name="Quantity")
     private int quantity;
-
 }

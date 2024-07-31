@@ -8,10 +8,29 @@
     <title>Change Password</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
     <style>
         .error {
             color: red;
             display: none;
+        }
+        .contemp {
+            width: 50%;
         }
     </style>
     <script>
@@ -31,14 +50,29 @@
                 saveButton.disabled = false;
             }
         }
+
+        function removeSpaces(event) {
+            event.target.value = event.target.value.replace(/\s/g, '');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById("newPassword").addEventListener('input', removeSpaces);
+            document.getElementById("confirmPassword").addEventListener('input', removeSpaces);
+        });
     </script>
 </head>
 
 <body>
-<div class="container">
-    <div class="row">
+<div th:if="${session.infor != null and session.infor.roleID.roleID == 1}">
+    <div th:include="header_admin"></div>
+</div>
+<div th:unless="${session.infor != null and session.infor.roleID.roleID == 1}">
+    <div th:include="header"></div>
+</div>
+<div class="temp">
+    <div class="contemp">
         <div class="col-md-6 offset-md-3">
-            <h1>Change Password</h1>
+            <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 50px"><b>Change Password</b></h1>
             <form action="changepassword" method="post">
                 <input type="hidden" name="id" id="id" th:value="${user.id}">
                 <div class="form-group">
@@ -76,6 +110,7 @@
         </div>
     </div>
 </div>
+<div th:include="footer"></div>
 </body>
 
 </html>

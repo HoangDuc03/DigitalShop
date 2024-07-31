@@ -1,24 +1,20 @@
 package com.example.ShopAcc.controller;
 
-import com.example.ShopAcc.dto.ProductDto;
-import com.example.ShopAcc.dto.ResponseObject;
 import com.example.ShopAcc.dto.UserDto;
 import com.example.ShopAcc.model.Product;
-import com.example.ShopAcc.repository.ProductRepository;
 import com.example.ShopAcc.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-
-//@SessionAttributes("userdto")
+@SessionAttributes("userdto")
 @RequiredArgsConstructor
+@RequestMapping("")
 public class ProductController {
     private final ProductService productService;
 
@@ -36,7 +32,6 @@ public class ProductController {
                               @RequestParam(defaultValue = "") String priceRange,
                               Model model) {
         Page<Product> products = productService.getProducts(search, page, size, sort, priceRange);
-        System.out.println("Hello: " + products.getContent());
         model.addAttribute("products", products.getContent());
         model.addAttribute("totalPages", products.getTotalPages());
         model.addAttribute("currentPage", page);
@@ -46,7 +41,7 @@ public class ProductController {
         return "product";
     }
 
-    @GetMapping("/manage-product")
+    @GetMapping("/admin/manage-product")
     public String manageProduct(@ModelAttribute("userdto") UserDto userDto,
                                 @RequestParam(defaultValue = "") String search,
                                 @RequestParam(defaultValue = "0") int page,
@@ -65,41 +60,47 @@ public class ProductController {
         return "manage-product";
     }
 
-    @GetMapping("/delete-product/{productId}")
+    @GetMapping("/admin/delete-product/{productId}")
     public String deleteProduct(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
         productService.softDelete(Math.toIntExact(productId));
         redirectAttributes.addFlashAttribute("successMessage", "Success!");
-        return "redirect:/manage-product";
+        return "redirect:/admin/manage-product";
     }
 
-    @GetMapping("/edit-product/{id}")
+    @GetMapping("/admin/edit-product/{id}")
     public String showEditProductForm(@PathVariable int id, Model model) {
         Product product = productService.getProductByID(id);
         model.addAttribute("product", product);
         return "edit-product";
     }
 
-    // POST request to handle form submission
-    @PostMapping("/edit-product/{id}")
-    public String handleEditProductForm(@PathVariable int id, @ModelAttribute("product") Product updatedProduct, RedirectAttributes redirectAttributes) {
+    @PostMapping("/admin/edit-product/{id}")
+    public String handleEditProductForm(@PathVariable int id,
+                                        @ModelAttribute("product") Product updatedProduct,
+                                        @RequestParam("file") MultipartFile file,
+                                        RedirectAttributes redirectAttributes) {
         Product product = productService.getProductByID(id);
         if (product != null) {
             product.setName(updatedProduct.getName());
             product.setPrice(updatedProduct.getPrice());
             product.setSold(updatedProduct.getSold());
-            product.setImage(updatedProduct.getImage());
             product.setDescribes(updatedProduct.getDescribes());
             product.setStatus(updatedProduct.isStatus());
-            productService.saveProduct(product);
+
+            productService.saveProduct(product, file);
+
             redirectAttributes.addFlashAttribute("successMessage", "Update product Success!");
-            return "redirect:/manage-product";
+            return "redirect:/admin/manage-product";
         }
-        return "redirect:/manage-product";
+        return "redirect:/admin/manage-product";
     }
-    @PostMapping("/add-product")
-    public String addProduct(@ModelAttribute("newProduct") Product newProduct ,RedirectAttributes redirectAttributes) {
-        productService.saveProduct(newProduct);
-        redirectAttributes.addFlashAttribute("successMessage", "Update product Success!");
-        return "redirect:/manage-product";
+
+    @PostMapping("/admin/add-product")
+    public String addProduct(@ModelAttribute("newProduct") Product newProduct,
+                             @RequestParam("file") MultipartFile file,
+                             RedirectAttributes redirectAttributes) {
+        productService.saveProduct(newProduct, file);
+        redirectAttributes.addFlashAttribute("successMessage", "Product added successfully!");
+        return "redirect:/admin/manage-product";
     }
 }

@@ -3,38 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Cart View</title>
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
         .container {
             width: 80%;
             margin: auto;
             overflow: hidden;
         }
-        h1 {
-            background-color: #9fcdff;
-            color: #1a1a1a;
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
-        }
         .cart-item {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: #fff;
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .product-image img {
             max-width: 150px;
             border-radius: 5px;
         }
         .product-details {
+            flex: 1;
             margin-left: 20px;
         }
         .product-details p {
@@ -42,6 +46,15 @@
         }
         .product-details form {
             margin: 10px 0;
+        }
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 10px;
+        }
+        .product-actions form {
+            margin-bottom: 5px;
         }
         .total-cart-price {
             font-size: 18px;
@@ -61,8 +74,9 @@
             color: #fff;
             border: none;
             padding: 10px 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #218838;
@@ -79,51 +93,371 @@
         .button-clear:hover {
             background-color: #e0a800;
         }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .checkbox-label input {
+            display: none;
+        }
+        .checkbox-label span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            vertical-align: middle;
+        }
+        .checkbox-label input:checked + span {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .checkbox-label input:checked + span::after {
+            content: '✓';
+            display: block;
+            color: #fff;
+            text-align: center;
+            line-height: 18px;
+        }
+
+        /* CSS for beautifying the dropdown */
+        .discount-dropdown {
+            margin-bottom: 10px;
+        }
+
+        .discount-dropdown label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .discount-dropdown select {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 200px;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .discount-dropdown select:hover {
+            border-color: #aaa;
+        }
+
+        .discount-dropdown select:focus {
+            outline: none;
+            border-color: #218838; /* Green color when focused */
+            box-shadow: 0 0 5px rgba(33, 136, 56, 0.5); /* Light green shadow when focused */
+        }
+        /* CSS for modal popup */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .modal-content p {
+            font-size: 20px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .modal-content a {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
     </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener("DOMContentLoaded", function() {
+            var purchaseSuccess = /*[[${purchaseSuccess}]]*/ false;
+            if (purchaseSuccess) {
+                var modal = document.getElementById("successModal");
+                modal.style.display = "block";
+            }
+        });
+        /*]]>*/
+    </script>
 </head>
 <body>
-<th:block th:include="/head_ver2"></th:block>
-<h1>Shopping Cart</h1>
-<div class="container">
-    <div th:if="${not #lists.isEmpty(cartItems)}">
-        <div th:each="item : ${cartItems}">
-            <div class="cart-item">
-                <div class="product-image">
-                    <img th:src="@{'/ProductTypeImages/' + ${item.imageUrl}}" alt="Product Image" />
+<div th:include="header"></div>
+
+
+<!-- Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <p>Purchase successful!</p>
+        <a th:href="@{/profile/purchasehistory/latestdetail}" style="margin: 5px;"><button>View Purchase History</button></a>
+        <button onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+
+<div class="temp">
+    <div class="contemp">
+        <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 50px"><b>Shopping Cart</b></h1>
+
+        <div class="container">
+            <div>
+                <p>Current Wallet: <span th:text="${currentWallet}"></span> VND</p>
+            </div>
+            <div th:if="${not #lists.isEmpty(cartItems)}">
+                <label class="checkbox-label">
+                    <input type="checkbox" onclick="toggleSelectAll(this)">
+                    <span></span> Choose All
+                </label>
+                <div th:each="item : ${cartItems}">
+                    <div class="cart-item">
+                        <label class="checkbox-label">
+                            <input type="checkbox"
+                                   name="selectedItems"
+                                   th:value="${item.id}"
+                                   th:attr="data-price=${item.totalPrice}, data-quantity=${item.quantity}, data-productId=${item.productId}"
+                                   onclick="updateTotalPrice()">
+                            <span></span>
+                        </label>
+                        <div class="product-image">
+                            <img th:src="@{'/ProductImages/' + ${item.productId} + '.jpg'}" alt="Product's Image" />
+                        </div>
+                        <div class="product-details">
+                            <p>Product ID: <span th:text="${item.productId}"></span></p>
+                            <form th:action="@{/cart/updateQuantity}" method="post" onsubmit="return validateQuantity(this);">
+                                <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                                <input type="hidden" name="productId" th:value="${item.productId}" />
+                                <label for="quantity-${item.id}">Quantity:</label>
+                                <input type="number" id="quantity-${item.id}" name="quantity" th:value="${item.quantity}" min="1" />
+                                <button type="submit" aria-label="Update Quantity">Update</button>
+                            </form>
+                            <p>Original Price: <span id="originalPrice-${item.id}" th:text="${item.price}"></span> VND</p>
+                            <p>Total Price: <span id="totalPrice-${item.id}" th:text="${item.totalPrice}"></span> VND</p>
+                            <p>Current Available: <span th:text="${item.currentAvailable}"></span></p>
+                        </div>
+                        <div class="product-actions">
+                            <form th:action="@{/cart/remove}" method="post" style="display:inline">
+                                <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                                <button type="submit" class="button-delete" style="background-color: #CE272D" aria-label="Delete Item">Delete</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="product-details">
-                    <p>Product ID: <span th:text="${item.productId}"></span></p>
-                    <form th:action="@{/cart/updateQuantity}" method="post">
-                        <input type="hidden" name="cartItemId" th:value="${item.id}" />
-                        <label for="quantity">Quantity:</label>
-                        <input type="number" id="quantity" name="quantity" th:value="${item.quantity}" min="1"/>
-                        <button type="submit">Update</button>
+
+                <!-- Dropdown to apply discount -->
+                <div class="discount-dropdown">
+                    <label for="discountSelect">Select Discount:</label>
+                    <select id="discountSelect" name="discountSelect" onchange="updateTotalPrice()">
+                        <option value="0">Choose Discount</option>
+                        <option th:each="display : ${displayValueList}"
+                                th:value="${display.entrySet().iterator().next().value}"
+                                th:text="${display.entrySet().iterator().next().key}"
+                                th:data-display="${display.entrySet().iterator().next().key}">
+                        </option>
+                    </select>
+                </div>
+                <!--        <input type="hidden" id="selectedDisplayValue" name="selectedDisplayValue" value="">-->
+
+                <!-- Total price of selected items -->
+                <div class="total-cart-price" id="totalPrice">
+                    <p>No item selected</p>
+                </div>
+
+                <div class="cart-actions">
+                    <form th:action="@{/cart/clear}" method="post">
+                        <button type="submit" class="button-clear" aria-label="Remove All Items">Remove All</button>
                     </form>
-                    <p>Price: $<span th:text="${item.price}"></span></p>
-                    <p>Total Price: $<span th:text="${item.totalPrice}"></span></p>
-                    <p>Current Available: <span th:text="${item.currentAvailable}"></span></p>
-                    <form th:action="@{/cart/remove}" method="post" style="display:inline;">
-                        <input type="hidden" name="cartItemId" th:value="${item.id}" />
-                        <button type="submit" class="button-delete">Delete</button>
+                    <form th:action="@{/purchase/purchaseSelected}" method="post" onsubmit="return validateSelectedItems()">
+                        <input type="hidden" name="selectedItems" id="selectedCartItemIds" />
+                        <input type="hidden" name="quantities" id="selectedQuantities" />
+                        <input type="hidden" name="productIds" id="selectedProductIds" />
+                        <input type="hidden" name="totalPrice" id="totalPriceInput" />
+                        <input type="hidden" name="selectedDisplayValue" id="selectedDisplayValue"  value=""/>
+                        <button type="submit" onclick="populateSelectedItems()">Purchase Selected Items</button>
                     </form>
+                </div>
+
+                <div th:if="${#lists.isEmpty(cartItems)}">
+                    <p>Your cart is empty.</p>
                 </div>
             </div>
         </div>
-        <div class="total-cart-price">
-            <p>Total Cart Price: $<span th:text="${totalCartPrice}"></span></p>
-        </div>
-        <div class="cart-actions">
-            <form th:action="@{/cart/clear}" method="post">
-                <button type="submit" class="button-clear">Remove All</button>
-            </form>
-            <form th:action="@{/cart/purchase}" method="post">
-                <button type="submit">Purchase</button>
-            </form>
-        </div>
-    </div>
-    <div th:if="${#lists.isEmpty(cartItems)}">
-        <p>Your cart is empty.</p>
     </div>
 </div>
+<div th:include="footer"></div>
+
+
+        <script>
+            // This function formats a number as currency in Vietnamese Dong with thousand separators
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+            }
+
+            // This function calculates the total price of selected items and applies the selected discount
+            function updateTotalPrice() {
+                //update value
+                var select = document.getElementById('discountSelect');
+                var selectedOption = select.options[select.selectedIndex];
+                var displayValue = selectedOption.getAttribute('data-display');
+                document.getElementById('selectedDisplayValue').value = displayValue;
+                //update price
+                let total = 0;
+                let selectedItems = document.querySelectorAll('input[name="selectedItems"]:checked');
+                if (selectedItems.length === 0) {
+                    document.getElementById('totalPrice').innerText = 'No item selected';
+                    return;
+                }
+
+                selectedItems.forEach(function (checkbox) {
+                    let price = parseFloat(checkbox.getAttribute('data-price'));
+                    if (!isNaN(price)) {
+                        total += price;
+                    }
+                });
+
+                // Apply discount
+                let discountPercentage = parseFloat(document.getElementById('discountSelect').value); // Get the selected discount percentage
+                if (!isNaN(discountPercentage) && discountPercentage > 0 && discountPercentage <= 1) {
+                    total *= (1 - discountPercentage);
+                }
+
+                // Format the total price for display purposes
+                // let formattedTotal = formatCurrency(total);
+                document.getElementById('totalPrice').innerText = formatCurrency(total);
+                document.getElementById('totalPriceInput').value = total;
+            }
+
+
+        function toggleSelectAll(source) {
+        let checkboxes = document.getElementsByName('selectedItems');
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+        updateTotalPrice();
+    }
+
+    function populateSelectedItems() {
+        let selectedItems = document.querySelectorAll('input[name="selectedItems"]:checked');
+        let selectedCartItemIds = [];
+        let selectedQuantities = [];
+        let selectedProductIds = [];
+        let totalPrice = parseFloat(document.getElementById('totalPriceInput').value);
+
+        selectedItems.forEach(function (item) {
+            let itemId = item.value;
+            let quantity = item.getAttribute('data-quantity');
+            let productId = item.getAttribute('data-productId');
+            selectedCartItemIds.push(itemId);
+            selectedQuantities.push(quantity);
+            selectedProductIds.push(productId);
+        });
+
+        // Submit the form
+        document.getElementById('selectedCartItemIds').value = selectedCartItemIds.join(',');
+        document.getElementById('selectedQuantities').value = selectedQuantities.join(',');
+        document.getElementById('selectedProductIds').value = selectedProductIds.join(',');
+    }
+
+    function validateQuantity(form) {
+        let quantityInput = form.querySelector('input[name="quantity"]');
+        if (quantityInput.value < 1) {
+            alert('Quantity must be at least 1');
+            return false;
+        }
+        return true;
+    }
+
+    function validateSelectedItems() {
+        const selectedItems = document.getElementById('selectedCartItemIds').value;
+
+        if (!selectedItems || selectedItems.trim() === '') {
+            alert("You do not choose the product to buy.");
+            return false; // Prevent form submission
+        }
+        return true; // Allow form submission
+    }
+
+    /*popup modal*/
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const purchaseSuccess = /*[[${purchaseSuccess}]]*/ false; // Ensure this is correctly output
+
+        console.log("Purchase Success:", purchaseSuccess); // Debug line to check value
+
+        if (purchaseSuccess) {
+            const modal = document.getElementById("successModal");
+            const span = document.getElementsByClassName("close")[0];
+            const stayButton = document.getElementById("stayButton");
+
+            modal.style.display = "block";
+
+                    // Close the modal when the user clicks on <span> (x)
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+                    // Close the modal when the user clicks on the stay button
+            stayButton.onclick = function() {
+                modal.style.display = "none";
+            }
+
+                    // Close the modal when the user clicks anywhere outside of the modal
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            }
+        }
+    });
+            function closeModal() {
+                var modal = document.getElementById("successModal");
+                modal.style.display = "none";
+            }
+
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('OutOfStock')) {
+                    alert('Product quantity is exceeded!!!');
+                }
+            };
+
+            window.onload = (function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('OutOfWallet')) {
+                    alert('Insufficient funds in wallet.');
+                }
+                if (urlParams.has('OutOfStock')) {
+                    alert('No product quantities enough!!!');
+                }
+                updateTotalPrice(); // Update total price onload
+            });
+</script>
 </body>
 </html>

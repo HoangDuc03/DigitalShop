@@ -5,11 +5,18 @@ import com.example.ShopAcc.model.Product;
 import com.example.ShopAcc.repository.ProductRepository;
 import com.example.ShopAcc.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +24,11 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductRepository productRepository;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir");
 
     @Override
     public List<Product> getAll() {
@@ -52,12 +64,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+
     public Page<Product> getProductsByStatus(String search, int page, int size, String sortDirection, boolean status) {
-        Sort sort = Sort.by("price");
+        Sort sort = Sort.by("ID");
         sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? sort.ascending() : sort.descending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
-        return productRepository.findProductTypeByStatusEqualsAndNameContaining(status, search, pageRequest);
+        return productRepository.findProductByStatusEqualsAndNameContaining(status, search, pageRequest);
     }
 
     @Override
@@ -76,8 +89,34 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product saveProduct(Product product) {
+        try {
+            StringBuilder fileUrl = new StringBuilder();
+            Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY + uploadDir, product.getFile().getOriginalFilename());
+            fileUrl.append(product.getFile().getOriginalFilename());
+            Files.write(fileNameAndPath, product.getFile().getBytes());
+            product.setImage(fileUrl.toString());
+        } catch (IOException e) {
+            System.out.println(e);
+        }
         return productRepository.save(product);
     }
+    @Override
+    public Product saveProduct(Product product, MultipartFile file) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                StringBuilder fileUrl = new StringBuilder();
+                Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY + uploadDir, file.getOriginalFilename());
+                Files.write(fileNameAndPath, file.getBytes());
+                fileUrl.append(file.getOriginalFilename());
+                product.setImage(fileUrl.toString());
+                System.out.println("File saved to: " + fileNameAndPath.toString());
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return productRepository.save(product);
+    }
+
 
     @Override
     public void softDelete(int id) {
@@ -100,4 +139,38 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductByID(int id) {
         return productRepository.findProductByID(id);
     }
+
+    @Override
+    public Product getProductByID_Q(int id) {
+        for (Product product : productRepository.findAll()) {
+            if(product.getID() == id)
+                return product;
+        }
+        return null;
+    }
+
+    @Override
+    public String getProductnameByID(int id) {
+        for (Product product : productRepository.findAll()) {
+            if(product.getID() == id)
+                return product.getName();
+        }
+        return null;
+    }
+
+    @Override
+    public int countRemainProduct(String name) {
+        return productRepository.countByNameAndStatus(name);
+    }
+
+    @Override
+    public void updateSoldQuantity(List<Integer> productIDs, List<Integer> quantities) {
+        for (int i = 0; i < productIDs.size(); i++) {
+            int productId = productIDs.get(i);
+            int quantity = quantities.get(i);
+            productRepository.updateSoldQuantity(productId, quantity);
+        }
+    }
+
+
 }

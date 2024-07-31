@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product Detail</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <style>
+        .form-control,
+        .btn {
+            font-size: 1.2rem;
+        }
+        .temp {
+            padding: 150px 0px 230px 0px;
+        }
+    </style>
+</head>
+<body style="font-size: 1.2rem">
+<div th:include="header_admin"></div>
+<div class="container mt-4 temp">
+<div class="contemp" style="margin-top: 40px; max-width: 60%">
+    <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 20px"><b>Edit Product Detail</b></h1>
+    <form th:action="@{/admin/product-details/edit/{id}(id=${productDetail.id})}" th:object="${productDetail}" method="post">
+        <div class="form-group">
+            <label for="seri">Seri</label>
+            <input type="text" class="form-control" id="seri" th:field="*{seri}" required>
+        </div>
+        <div class="form-group">
+            <label for="code">Code</label>
+            <input type="text" class="form-control" id="code" th:field="*{code}" required>
+        </div>
+        <div th:if="${message}">
+            <div class="alert alert-danger" th:text="${message}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a th:href="@{/admin/product-details/product/{productId}(productId=${productDetail.productid})}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+</div>
+<div th:include="footer"></div>
+
+</body>
+</html>

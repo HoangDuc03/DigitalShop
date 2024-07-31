@@ -2,6 +2,7 @@ package com.example.ShopAcc.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Getter
@@ -10,8 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "Product")
-
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +31,13 @@ public class Product {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "Describes")
+    @Column(name = "`Describe`")
     private String Describes;
 
     @Column(name = "status")
     private boolean status;
+
+    @Transient
+    private MultipartFile file;
 }
 

@@ -1,7 +1,10 @@
+
 package com.example.ShopAcc.controller;
 
 import com.example.ShopAcc.model.User;
+import com.example.ShopAcc.model.Wallet;
 import com.example.ShopAcc.repository.UserRepository;
+import com.example.ShopAcc.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,21 +18,25 @@ public class UserProfileController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    WalletRepository walletRepository;
     @GetMapping("/profile")
     public String profile(Model model, @RequestParam int id) {
         User user = userRepository.findById(id).get();
         model.addAttribute("user", user);
+        Wallet wallet = walletRepository.findByAccountid(user.getId());
+        model.addAttribute("wallet", wallet);
         return "profile";
     }
 
-    @GetMapping("/editprofile")
+    @GetMapping("/profile/editprofile")
     public String showEditProfileForm(Model model, @RequestParam int id) {
         User user = userRepository.findById(id).orElse(null);
         model.addAttribute("user", user);
         return "editprofile";
     }
 
-    @PostMapping("/editprofile")
+    @PostMapping("/profile/editprofile")
     public String updateProfile(User user, BindingResult result) {
         if (result.hasErrors()) {
             return "editprofile";
@@ -41,3 +48,4 @@ public class UserProfileController {
         return "redirect:/profile?id=" + user.getId();
     }
 }
+

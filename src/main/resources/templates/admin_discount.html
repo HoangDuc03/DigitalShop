@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Discounts</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- basic -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{'/css/bootstrap.min.css'}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{'/css/style.css'}" >
+    <!-- Responsive-->
+    <link rel="stylesheet" th:href="@{'/css/responsive.css'}" >
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" th:href="@{'/css/jquery.mCustomScrollbar.min.css'}" >
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .btn-margin {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div th:include="header_admin"></div>
+<div class="temp">
+    <h1 class="text-center" style="font-size: xxx-large; margin-bottom: 20px"><b>Admin Discounts</b></h1>
+<div class="container">
+
+    <a th:href="@{/admin/discounts/new}" class="btn btn-primary btn-margin">Add New Discount</a>
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>User ID</th>
+            <th>DetailID</th>
+            <th>Discount ID</th>
+            <th>Quantity</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="discountDetail : ${discountDetails}">
+            <td th:text="${discountDetail.userID}">User ID</td>
+            <td th:text="${discountDetail.id}">Detail ID</td>
+            <td th:text="${discountDetail.discountID}">Discount ID</td>
+            <td th:text="${discountDetail.quantity}">Quantity</td>
+            <td th:text="${discountDetail.value}">Value</td>
+            <td th:text="${discountDetail.status} ? 'Active' : 'Inactive'">Status</td>
+            <td>
+                <a th:href="@{/admin/discounts/edit/{id}(id=${discountDetail.id})}" class="btn btn-sm btn-primary">Edit</a>
+                <a th:href="@{/admin/discounts/delete/{id}(id=${discountDetail.id})}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+<div th:include="footer"></div>
+<script>
+    window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('NotExisted')) {
+                    alert('No User Found!!!');
+                }
+            };
+</script>
+</body>
+</html>

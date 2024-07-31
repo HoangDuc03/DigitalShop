@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Discount Values</title>
+</head>
+<body>
+<h1>Discount Values</h1>
+<form action="/Discount/confirm" method="post">
+  <!-- Dropdown to apply discount -->
+  <div class="discount-dropdown">
+    <label for="discountSelect">Select Discount:</label>
+    <select id="discountSelect" name="discountSelect" onchange="updateHiddenField()">
+      <option value="0">Choose Discount</option>
+      <option th:each="display : ${displayValueList}"
+              th:value="${display.entrySet().iterator().next().value}"
+              th:text="${display.entrySet().iterator().next().key}"
+              th:data-display="${display.entrySet().iterator().next().key}">
+      </option>
+    </select>
+  </div>
+  <input type="hidden" id="selectedDisplayValue" name="selectedDisplayValue" value="">
+  <br/><br/>
+  <input type="submit" value="Submit">
+</form>
+
+<script>
+  function updateHiddenField() {
+    var select = document.getElementById('discountSelect');
+    var selectedOption = select.options[select.selectedIndex];
+    var displayValue = selectedOption.getAttribute('data-display');
+    document.getElementById('selectedDisplayValue').value = displayValue;
+  }
+</script>
+
+</body>
+</html>

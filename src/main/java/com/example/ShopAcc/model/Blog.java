@@ -27,9 +27,16 @@ public class Blog {
     @Column(name = "Text", nullable = false)
     private String text;
 
-    @Column(name = "Date", nullable = false, updatable = false)
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createdAt;
 
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date updatedAt;
 }

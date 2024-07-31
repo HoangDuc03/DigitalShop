@@ -40,10 +40,11 @@ html {
 
 body {
      color: #666666;
-     font-size: 14px;
+     font-size: 1.2rem;
      font-family: 'Poppins', sans-serif;
      line-height: 1.80857;
      font-weight: normal;
+     background-color: #f5f6f6;
 }
 
 a {
@@ -264,7 +265,7 @@ button {
 }
 
 .navigation.navbar-dark .navbar-nav .nav-link {
-     padding: 0 20px;
+     padding: 8px 20px;
      color: #070404;
      font-size: 17px;
      line-height: 20px;
@@ -310,19 +311,35 @@ button {
      background: transparent;
      position: absolute;
      z-index: 999;
-     border-top: #090102 solid 11px;
 }
 
 .logo {
      padding-top: 14px;
 }
 
+.temp-center {
+     margin: 0 200px;
+}
+
+.temp{
+     background: #f5f6f6;
+     padding: 150px 0px 90px 0px;
+}
+
+.contemp {
+     background: #ffffff;
+     padding: 20px;
+     border-radius: 8px;
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+     width: 95%;
+     margin: auto;
+}
 
 /** banner section **/
 
 .banner_main {
      background: #f5f6f6;
-     padding: 198px 0px 90px 0px;
+     padding: 150px 0px 90px 0px;
 }
 
 .text-bg {
@@ -333,7 +350,6 @@ button {
      color: #070404;
      font-size: 60px;
      line-height: 76px;
-     padding-bottom: 45px;
      font-weight: bold;
      text-transform: uppercase;
 }
@@ -504,6 +520,16 @@ button {
 
 .blu {
      color: #03cafc;
+     text-transform: initial;
+}
+
+.rr {
+     color: red;
+     text-transform: initial;
+}
+
+.or {
+     color: orange;
      text-transform: initial;
 }
 
@@ -774,7 +800,7 @@ button {
 
 .footer {
      background: #252525;
-     padding-top: 90px;
+     padding-top: 30px;
      text-align: center;
      font-family: 'Roboto', sans-serif;
 }
@@ -800,8 +826,8 @@ ul.location_icon li a {
 }
 
 .copyright {
-     margin-top: 80px;
-     padding-bottom: 20px;
+     margin-top: 30px;
+     padding-bottom: 10px;
      background: #fbfdfd;
 }
 
@@ -810,7 +836,7 @@ ul.location_icon li a {
      font-size: 18px;
      line-height: 22px;
      text-align: center;
-     padding-top: 25px;
+     padding-top: 10px;
      font-weight: normal;
 }
 

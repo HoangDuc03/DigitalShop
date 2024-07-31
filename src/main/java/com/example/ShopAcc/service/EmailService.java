@@ -1,3 +1,4 @@
+
 package com.example.ShopAcc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,3 +31,4 @@ public class EmailService implements EmailServiceI {
         senderMailSender.send(message);
     }
 }
+

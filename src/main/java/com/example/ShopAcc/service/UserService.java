@@ -79,31 +79,44 @@ public class UserService extends hash implements UserServiceI {
         return ResponseEntity.ok(new ResetPasswordDto("Success", "OTP has been sent to your email", user));
     }
 
-    @Override
-    public ResponseEntity<ResetPasswordDto> verifyOtp(int userId, String otp,HttpSession session) {
-        User user = userRepository.findById(userId).orElse(null);
-        otp inforesetpass = (otp) session.getAttribute("otpresetpass");
-        if (user == null || !otp.equals(inforesetpass.getOtp())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ResetPasswordDto("Failed", "Invalid OTP", null));
-        }
-        session.removeAttribute("otpresetpass");
-        return ResponseEntity.ok(new ResetPasswordDto("Success", "OTP verified", user));
-    }
 
     @Override
-    public ResponseEntity<ResetPasswordDto> resetPassword(int userId, String newPassword, String reNewPassword) {
+    public ResponseEntity<ResetPasswordDto> verifyOtp(String otp, HttpSession session) {
+        otp inforesetpass = (otp) session.getAttribute("otpresetpass");
+        if (inforesetpass == null || !otp.equals(inforesetpass.getOtp())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResetPasswordDto("Failed", "Invalid OTP. Please try again.", null));
+        }
+        session.setAttribute("resetPasswordUserId", inforesetpass.getUser().getId());
+        session.removeAttribute("otpresetpass");
+        return ResponseEntity.ok(new ResetPasswordDto("Success", "OTP verified", null));
+    }
+    public boolean checkEmailExists(String email) {
+        User user = userRepository.findByEmail(email);
+        return user != null;
+    }
+    @Override
+    public ResponseEntity<ResetPasswordDto> resetPassword(String newPassword, String reNewPassword, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("resetPasswordUserId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResetPasswordDto("Failed", "Invalid session", null));
+        }
+
         if (!newPassword.equals(reNewPassword)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ResetPasswordDto("Failed", "Passwords do not match", null));
         }
+
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResetPasswordDto("Failed", "User not found", null));
         }
+
         user.setPassword(hashcode(newPassword));
         userRepository.save(user);
+        session.removeAttribute("resetPasswordUserId");
         return ResponseEntity.ok(new ResetPasswordDto("Success", "Password has been reset successfully", null));
     }
 

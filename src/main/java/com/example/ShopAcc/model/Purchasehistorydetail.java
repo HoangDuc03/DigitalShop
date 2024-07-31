@@ -1,3 +1,4 @@
+
 package com.example.ShopAcc.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -15,14 +16,27 @@ public class Purchasehistorydetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="ID")
-    private int ID;
+    private int id;
+
     @Column(name = "`Code` ")
-    private String Code;
+    private String code;
+
     @Column(name = "Seri")
-    private String Seri;
+    private String seri;
 
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "Purchasehistoryid")
+
     private Purchasehistory Purchasehistory;
+
+    @Override
+    public String toString() {
+        return "Purchasehistorydetail{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", seri='" + seri + '\'' +
+                ", Purchasehistory=" + Purchasehistory +
+                '}';
+    }
 }

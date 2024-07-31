@@ -1,81 +1,215 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
     <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .container-flex {
+            flex: 1;
+        }
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            height: 50px;
+        }
         .error-message {
             color: red;
+            margin-top: 5px;
+        }
+        .regenerate-button {
+            margin-left: 10px;
+            height: 100%;
+        }
+        .footer {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #000;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .25em;
         }
     </style>
-    <link rel="stylesheet"
-          href=
-                  "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <!-- success message  -->
-            <div th:if="${param.success}">
-                <div class="alert alert-info"> You are successfull registered to our awsome app!</div>
-            </div>
 
-            <h1>Registration</h1>
-            <form id="registerForm" th:action="@{/register}" th:object="${user}" method="post">
-                <div class="mb-3">
-                    <label for="fullName" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}">
-                    <div id="fullNameError" class="error-message"></div>
+<section class="vh-100 container-flex">
+    <div class="container-fluid h-custom">
+        <form th:action="@{/register}" method="post" th:object="${user}" id="registerForm">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-9 col-lg-6 col-xl-5">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                         class="img-fluid" alt="Sample image">
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}">
-                    <div id="emailError" class="error-message"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" id="phone" th:field="*{phoneNumber}">
-                    <div id="phoneError" class="error-message"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" th:field="*{userName}">
-                    <div id="usernameError" class="error-message"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="password" th:field="*{password}">
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                            <i class="bi bi-eye-slash" id="toggleIcon"></i>
-                        </button>
+                <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                    <br>
+                    <h1>Registration</h1>
+                    <!-- Full Name input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="fullName">Full Name</label>
+                        <input type="text" id="fullName" class="form-control" th:field="*{fullName}" required/>
+                        <div id="fullNameError" class="error-message"></div>
                     </div>
-                    <div id="passwordError" class="error-message"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="rePassword" class="form-label">Repeat Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="rePassword">
-                        <button class="btn btn-outline-secondary" type="button" id="toggleRePassword">
-                            <i class="bi bi-eye-slash" id="toggleIcons"></i>
-                        </button>
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-control" th:field="*{email}" required/>
+                        <th:block th:if="${EmailExist != null}">
+                            <label style="color: red" th:text="${EmailExist}"></label>
+                        </th:block>
+                        <div id="emailError" class="error-message"></div>
                     </div>
-                    <div id="rePasswordError" class="error-message"></div>
+                    <!-- Phone input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="phone">Phone</label>
+                        <input type="tel" id="phone" class="form-control" th:field="*{phoneNumber}" required/>
+                        <div id="phoneError" class="error-message"></div>
+                    </div>
+                    <!-- Username input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="username">Username</label>
+                        <input type="text" id="username" class="form-control" th:field="*{userName}" required/>
+                        <div id="usernameError" class="error-message"></div>
+                    </div>
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="password">Password</label>
+                        <div class="input-group">
+                            <input type="password" id="password" class="form-control" th:field="*{password}" required/>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                        <div id="passwordError" class="error-message"></div>
+                    </div>
+                    <!-- Repeat Password input -->
+                    <div class="form-outline mb-4">
+                        <label class="control-label" for="rePassword">Repeat Password</label>
+                        <div class="input-group">
+                            <input type="password" id="rePassword" class="form-control" required/>
+                            <button class="btn btn-outline-secondary" type="button" id="toggleRePassword">
+                                <i class="bi bi-eye-slash" id="toggleIcons"></i>
+                            </button>
+                        </div>
+                        <div id="rePasswordError" class="error-message"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                    <p class="small fw-bold mt-2 pt-1 mb-0">Already registered? <a href="/" th:href="@{/login}">Login here</a></p>
                 </div>
-                <button type="submit" class="btn btn-success">Register</button>
-                <span>Already registered ? <a href="/" th:href="@{/login}">Login here</a></span>
-            </form>
-            <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
-            <div id="formError" class="alert alert-danger mt-3" style="display:none;"></div>
-        </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="footer d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+    <!-- Copyright -->
+    <div class="text-white mb-3 mb-md-0 text-center">
+        Copyright © 2024. All rights reserved.
+    </div>
+    <!-- Right -->
+    <div>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-google"></i>
+        </a>
+        <a href="#!" class="text-white">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
     </div>
 </div>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var captchaText = /*[[${captcha}]]*/ '';
+    /*]]>*/
+</script>
 
 <script>
+    function generateCaptcha(captchaText) {
+        const canvas = document.getElementById('captchaCanvas');
+        const context = canvas.getContext('2d');
+
+        // Clear the canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw background color
+        context.fillStyle = '#f0f0f0';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set text properties
+        context.font = '30px Arial';
+        context.fillStyle = 'black';
+        context.textBaseline = 'middle';
+        context.textAlign = 'center';
+
+        // Draw the captcha text
+        context.fillText(captchaText, canvas.width / 2, canvas.height / 2);
+
+        // Draw some random lines for added security
+        for (let i = 0; i < 5; i++) {
+            context.strokeStyle = getRandomColor();
+            context.beginPath();
+            context.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            context.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+            context.stroke();
+        }
+    }
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function regenerateCaptcha() {
+        $.get("/generateCaptcha", function (data) {
+            captchaText = data; // Update the global captchaText variable
+            generateCaptcha(captchaText);
+        });
+    }
+
+    // Call generateCaptcha() when page is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        generateCaptcha(captchaText);
+    });
+
     document.getElementById('registerForm').addEventListener('submit', function (event) {
         event.preventDefault();
         let isValid = true;
@@ -84,21 +218,12 @@
         // Full Name validation
         const fullName = document.getElementById('fullName').value.trim();
         const fullNameError = document.getElementById('fullNameError');
-        if (!/^[A-Za-z ]{4,}$/.test(fullName) || fullName.length < 4) {
-            fullNameError.textContent = "Full Name must be at least 4 characters long and contain only letters and spaces.";
+        if (!/^[a-zA-Z\s]+$/.test(fullName)) {
             isValid = false;
+            errorMessage = "Full name can only contain letters and spaces";
+            fullNameError.textContent = errorMessage;
         } else {
             fullNameError.textContent = "";
-        }
-
-        // Username validation
-        const username = document.getElementById('username').value.trim();
-        const usernameError = document.getElementById('usernameError');
-        if (username.length < 6) {
-            usernameError.textContent = "Username must be at least 6 characters long.";
-            isValid = false;
-        } else {
-            usernameError.textContent = "";
         }
 
         // Email validation
@@ -106,8 +231,9 @@
         const emailError = document.getElementById('emailError');
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
-            emailError.textContent = "Email must follow the email format. example FPT@gmail.com";
             isValid = false;
+            errorMessage = "Invalid email format";
+            emailError.textContent = errorMessage;
         } else {
             emailError.textContent = "";
         }
@@ -115,66 +241,82 @@
         // Phone validation
         const phone = document.getElementById('phone').value.trim();
         const phoneError = document.getElementById('phoneError');
-        if (!/^0\d{9}$/.test(phone)) {
-            phoneError.textContent = "Phone must be 10 digits long and start with 0.";
+        const phonePattern = /^\d{9,15}$/;
+        if (!phonePattern.test(phone)) {
             isValid = false;
+            errorMessage = "Phone number must be between 9 and 15 digits";
+            phoneError.textContent = errorMessage;
         } else {
             phoneError.textContent = "";
         }
 
-        // Password validation
-        const password = document.getElementById('password').value.trim();
-        const passwordError = document.getElementById('passwordError');
-        const passwordPattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{6,}$/;
-        if (!passwordPattern.test(password)) {
-            passwordError.textContent = "Password must be at least 6 characters long, contain at least one uppercase letter, and one special character.";
+        // Username validation
+        const username = document.getElementById('username').value.trim();
+        const usernameError = document.getElementById('usernameError');
+        if (username.length < 3 || username.length > 15) {
             isValid = false;
+            errorMessage = "Username must be between 3 and 15 characters long";
+            usernameError.textContent = errorMessage;
         } else {
-            passwordError.textContent = "";
+            usernameError.textContent = "";
         }
 
+        // Password validation
+        const password = document.getElementById('password').value;
+        const passwordError = document.getElementById('passwordError');
+        const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+        // if (!passwordPattern.test(password)) {
+        //     isValid = false;
+        //     errorMessage = "Password must be at least 6 characters long and contain at least one letter and one number";
+        //     passwordError.textContent = errorMessage;
+        // } else {
+        //     passwordError.textContent = "";
+        // }
+
         // Repeat Password validation
-        const rePassword = document.getElementById('rePassword').value.trim();
+        const rePassword = document.getElementById('rePassword').value;
         const rePasswordError = document.getElementById('rePasswordError');
-        if (password !== rePassword) {
-            rePasswordError.textContent = "Passwords do not match.";
+        if (rePassword !== password) {
             isValid = false;
+            errorMessage = "Passwords do not match";
+            rePasswordError.textContent = errorMessage;
         } else {
             rePasswordError.textContent = "";
         }
 
-        // Display error message if form is not valid
-        const formError = document.getElementById('formError');
-        if (!isValid) {
-            formError.textContent = "Please fix the errors above.";
-            formError.style.display = "block";
-            formError.textContent = "Please fix the errors above.";
-            formError.style.display = "block";
-        } else {
-            formError.style.display = "none";
-            this.submit();
+        if (isValid) {
+            document.getElementById('registerForm').submit();
         }
     });
 
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
-
-    togglePassword.addEventListener('click', function () {
-        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordField.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('bi-eye-slash');
-        this.querySelector('i').classList.toggle('bi-eye');
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('bi-eye-slash');
+            toggleIcon.classList.add('bi-eye');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('bi-eye');
+            toggleIcon.classList.add('bi-eye-slash');
+        }
     });
 
-    const toggleRePassword = document.getElementById('toggleRePassword');
-    const rePasswordField = document.getElementById('rePassword');
-
-    toggleRePassword.addEventListener('click', function () {
-        const type = rePasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        rePasswordField.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('bi-eye-slash');
-        this.querySelector('i').classList.toggle('bi-eye');
+    document.getElementById('toggleRePassword').addEventListener('click', function () {
+        const rePasswordInput = document.getElementById('rePassword');
+        const toggleIcons = document.getElementById('toggleIcons');
+        if (rePasswordInput.type === 'password') {
+            rePasswordInput.type = 'text';
+            toggleIcons.classList.remove('bi-eye-slash');
+            toggleIcons.classList.add('bi-eye');
+        } else {
+            rePasswordInput.type = 'password';
+            toggleIcons.classList.remove('bi-eye');
+            toggleIcons.classList.add('bi-eye-slash');
+        }
     });
 </script>
+
 </body>
 </html>

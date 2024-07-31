@@ -1,3 +1,4 @@
+
 package com.example.ShopAcc.service;
 
 import com.example.ShopAcc.dto.ResetPasswordDto;
@@ -8,3 +9,4 @@ public interface UserServiceImpl {
     ResponseEntity<ResetPasswordDto> verifyOtp(int userId, String otp);
     ResponseEntity<ResetPasswordDto> resetPassword(int userId, String newPassword, String reNewPassword);
 }
+

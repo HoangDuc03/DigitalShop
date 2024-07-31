@@ -11,7 +11,17 @@
           href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="css/login.css">
     <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .container-flex {
+            flex: 1;
+        }
         .captcha-box {
             display: flex;
             align-items: center;
@@ -22,55 +32,114 @@
             color: red;
             margin-top: 5px;
         }
+        .regenerate-button {
+            margin-left: 10px;
+            height: 100%;
+        }
+        .footer {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #000;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .25em;
+        }
     </style>
 </head>
 <body>
-
-<!-- Thymeleaf conditional block to include header -->
-<th:block th:if="${userdto != null}">
-    <th:block th:include="/_header_on"></th:block>
-</th:block>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h1>Login</h1>
-            <form th:action="@{/login}" method="post" th:object="${userdto}" id="loginForm">
-                <div class="form-group">
-                    <label class="control-label" for="email"> Email </label>
-                    <input type="text" id="email" class="form-control" th:field="*{email}"
-                           placeholder="Enter your email" required autofocus/>
-                    <div th:if="${param.emailwrong}" class="alert alert-danger error-message">User not found. Please check your email.</div>
+<div th:include="header.html"></div>
+<section class="vh-100 container-flex">
+    <div class="container-fluid h-custom">
+        <form th:action="@{/login}" method="post" th:object="${userdto}" id="loginForm">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-9 col-lg-6 col-xl-5">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                         class="img-fluid" alt="Sample image">
                 </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="password"> Password </label>
-                    <input type="password" id="password" class="form-control" th:field="*{password}"
-                           placeholder="Enter your password" required/>
-                    <div th:if="${param.passwordwrong}" class="alert alert-danger error-message">Incorrect password. Please try again.</div>
+                <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                    <form>
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <label class="control-label" for="Email">Email</label>
+                            <input type="text" id="Email" class="form-control" th:field="*{email}" required autofocus="autofocus"/>
+                        </div>
+                        <div th:if="${param.emailwrong}">
+                            <div class="alert alert-info">Your email is not correct</div>
+                        </div>
+                        <!-- Password input -->
+                        <div class="form-group">
+                            <label class="control-label" for="Password">Password</label>
+                            <input type="password" id="Password" class="form-control" th:field="*{password}" required/>
+                        </div>
+                        <div th:if="${param.passwordwrong}">
+                            <div class="alert alert-info">Your password is not correct</div>
+                        </div>
+                        <!-- Captcha input -->
+                        <div class="form-group">
+                            <label class="control-label" for="captcha">Captcha</label>
+                            <div class="captcha-box">
+                                <canvas id="captchaCanvas" width="200" height="50"></canvas>
+                                <button type="button" class="btn btn-secondary regenerate-button" onclick="regenerateCaptcha()">Regenerate</button>
+                            </div>
+                            <input type="text" id="captcha" class="form-control" name="inputCaptcha" placeholder="Enter captcha" required/>
+                            <div th:if="${param.captchawrong}">
+                                <div class="alert alert-info">Your Captcha is not correct</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Checkbox -->
+                            <div class="form-check mb-0">
+                                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
+                                <label class="form-check-label" for="form2Example3">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a href="/" th:href="@{/forgot}">Forgot password?</a>
+                        </div>
+                        <div class="text-center text-lg-start mt-4 pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg"
+                                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="/" th:href="@{/register}">Register</a></p>
+                        </div>
+                    </form>
                 </div>
+            </div>
+        </form>
+    </div>
+</section>
 
-                <div class="form-group">
-                    <label class="control-label" for="captcha"> Captcha </label>
-                    <div class="captcha-box">
-                        <canvas id="captchaCanvas" width="200" height="50"></canvas>
-                    </div>
-                    <input type="text" id="captcha" class="form-control" name="inputCaptcha"
-                           placeholder="Enter captcha" required/>
-                    <div th:if="${param.captchawrong}" class="alert alert-danger error-message">Incorrect CAPTCHA entered. Please try again.</div>
-                </div>
-
-                <div class="form-group">
-                    <button type="button" class="btn btn-secondary" onclick="regenerateCaptcha()">Regenerate</button>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success">Login</button>
-                    <span>You don't have an account? <a href="/" th:href="@{/register}">Register here</a></span>
-                    <span> <a href="/" th:href="@{/forgot}">Forget password?</a></span>
-                </div>
-            </form>
-        </div>
+<div class="footer d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+    <!-- Copyright -->
+    <div class="text-white mb-3 mb-md-0">
+        Copyright © 2024. All rights reserved.
+    </div>
+    <!-- Right -->
+    <div>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-google"></i>
+        </a>
+        <a href="#!" class="text-white">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
     </div>
 </div>
 
@@ -130,6 +199,13 @@
     // Call generateCaptcha() when page is loaded
     document.addEventListener('DOMContentLoaded', function () {
         generateCaptcha(captchaText);
+    });
+
+    window.onload = (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('Inactive')) {
+            alert('Your account is Inactive! Please contact with us!');
+        }
     });
 </script>
 
